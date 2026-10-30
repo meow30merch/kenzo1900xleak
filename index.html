@@ -1,0 +1,258 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <title>Kenzo List</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone@7/babel.min.js"></script>
+  <style>
+    :root {
+      --bg: #0a0b0f;
+      --panel: #131720;
+      --line: #232936;
+      --text: #e8ebf2;
+      --muted: #7a8399;
+      --accent: #ff5c5c;
+      --accent-glow: rgba(255, 92, 92, 0.35);
+      --pad: clamp(12px, 4vw, 24px);
+      --gap: clamp(8px, 2vw, 14px);
+      --radius: clamp(12px, 3vw, 18px);
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    html, body {
+      width: 100%;
+      min-height: 100%;
+      overflow-x: hidden;
+    }
+    body {
+      background:
+        radial-gradient(1200px 600px at 50% -10%, rgba(255, 92, 92, 0.12), transparent 60%),
+        radial-gradient(800px 400px at 50% 110%, rgba(94, 184, 255, 0.06), transparent 60%),
+        #0a0b0f;
+      color: var(--text);
+      font-family: 'Inter', system-ui, -apple-system, sans-serif;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      padding: var(--pad);
+      padding-top: max(var(--pad), env(safe-area-inset-top));
+      padding-bottom: max(var(--pad), env(safe-area-inset-bottom));
+      -webkit-font-smoothing: antialiased;
+    }
+    .wrap {
+      width: 100%;
+      max-width: 960px;
+      display: flex;
+      flex-direction: column;
+      gap: clamp(20px, 4vw, 32px);
+      animation: fadeIn 0.6s ease-out;
+    }
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(12px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .header-text {
+      text-align: center;
+      font-size: clamp(16px, 4.5vw, 24px);
+      font-weight: 700;
+      letter-spacing: -0.02em;
+      line-height: 1.3;
+      padding: 0 4px;
+      background: linear-gradient(90deg, #fff, var(--accent));
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+      animation: slideDown 0.7s ease-out;
+    }
+    @keyframes slideDown {
+      from { opacity: 0; transform: translateY(-16px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .panel {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      overflow: hidden;
+      box-shadow: 0 30px 60px rgba(0,0,0,0.5);
+    }
+    .row {
+      display: grid;
+      grid-template-columns: minmax(0,1.6fr) minmax(0,1.8fr) minmax(0,0.7fr) minmax(0,1.1fr) minmax(0,1.3fr);
+      gap: var(--gap);
+      padding: clamp(12px, 3vw, 18px) clamp(14px, 4vw, 24px);
+      border-bottom: 1px solid var(--line);
+      align-items: center;
+      transition: background 0.2s ease;
+      animation: rowIn 0.4s ease-out both;
+    }
+    .row:last-child { border-bottom: none; }
+    .row:hover { background: rgba(255, 92, 92, 0.06); }
+    @keyframes rowIn {
+      from { opacity: 0; transform: translateX(-12px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+    .row.head {
+      background: #0f1319;
+      font-size: clamp(10px, 1.8vw, 12px);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--muted);
+      animation: none;
+    }
+    .row.head:hover { background: #0f1319; }
+    .cell {
+      font-size: clamp(12px, 2.6vw, 14px);
+      line-height: 1.45;
+      word-break: break-word;
+      overflow-wrap: anywhere;
+      min-width: 0;
+    }
+    .cell.name { font-weight: 600; color: #fff; }
+    .cell.phone {
+      color: var(--accent);
+      font-family: 'Courier New', monospace;
+      font-weight: 600;
+      letter-spacing: 0.02em;
+    }
+    .face {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: clamp(10px, 2vw, 14px);
+      padding: var(--pad);
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      text-align: center;
+      animation: faceIn 0.8s ease-out;
+    }
+    @keyframes faceIn {
+      from { opacity: 0; transform: scale(0.92); }
+      to { opacity: 1; transform: scale(1); }
+    }
+    .face img {
+      max-width: min(240px, 70vw);
+      width: 100%;
+      height: auto;
+      border-radius: clamp(8px, 2vw, 14px);
+      border: 2px solid var(--line);
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .face img:hover {
+      transform: scale(1.03);
+      box-shadow: 0 0 40px var(--accent-glow);
+      border-color: var(--accent);
+    }
+    .face-label {
+      font-size: clamp(11px, 2.4vw, 13px);
+      color: var(--muted);
+      font-style: italic;
+    }
+    .footer {
+      text-align: center;
+      font-size: clamp(13px, 3vw, 15px);
+      font-weight: 600;
+      color: var(--muted);
+      padding-top: 8px;
+    }
+    .footer span { color: var(--accent); font-weight: 700; }
+
+    /* ── mobile: karty zamiast tabeli ── */
+    @media (max-width: 640px) {
+      .row.head { display: none; }
+      .row {
+        grid-template-columns: 1fr;
+        gap: 6px;
+        padding: 16px;
+      }
+      .cell {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: 12px;
+        padding: 2px 0;
+      }
+      .cell::before {
+        content: attr(data-label);
+        color: var(--muted);
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        flex-shrink: 0;
+      }
+      .cell.name {
+        font-size: 16px;
+        padding-bottom: 8px;
+        margin-bottom: 4px;
+        border-bottom: 1px dashed var(--line);
+        display: block;
+      }
+      .cell.name::before { display: none; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after {
+        animation-duration: 0.01ms !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div id="root"></div>
+
+  <script type="text/babel">
+    const DATA = [
+      { name: "Jakub Opała", address: "narutowicza 25/1", postal: "22-500", city: "Hrubieszów", phone: "+48729877800" },
+      { name: "Jakub Kaspruk", address: "Świerszczów 76 76", postal: "22-500", city: "Hrubieszów", phone: "+48517668070" },
+      { name: "Jakub Cierech", address: "mjr.H.Dobrzańskiego Hubala 5 5", postal: "22-500", city: "Hrubieszów", phone: "+48609834770" },
+      { name: "Jakub Kutera", address: "Listopadowa 9/19", postal: "22-500", city: "Hrubieszów", phone: "504592339" },
+      { name: "Jakub Szulakiewicz", address: "grabowiecka 37", postal: "22-500", city: "Hrubieszów", phone: "539007267" },
+      { name: "Jakub Wybranowski", address: "Konopnickiej 39", postal: "22-500", city: "Hrubieszów", phone: "696349157" },
+    ];
+
+    function App() {
+      return (
+        <div className="wrap">
+          <div className="header-text">macie któryś z tych to kenzo</div>
+
+          <div className="panel">
+            <div className="row head">
+              <div>Imię i nazwisko</div>
+              <div>Adres</div>
+              <div>Kod</div>
+              <div>Miasto</div>
+              <div>Telefon</div>
+            </div>
+            {DATA.map((p, i) => (
+              <div className="row" key={i} style={{ animationDelay: `${i * 60}ms` }}>
+                <div className="cell name" data-label="Imię i nazwisko">{p.name}</div>
+                <div className="cell" data-label="Adres">{p.address}</div>
+                <div className="cell" data-label="Kod">{p.postal}</div>
+                <div className="cell" data-label="Miasto">{p.city}</div>
+                <div className="cell phone" data-label="Telefon">{p.phone}</div>
+              </div>
+            ))}
+          </div>
+
+          <div className="face">
+            <img src="1.png" alt="twarz" />
+            <div className="face-label">a to jego twarz (jakosc ulepszona w ai)</div>
+          </div>
+
+          <div className="footer">pozdro <span>kenzo1900x</span></div>
+        </div>
+      );
+    }
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+  </script>
+</body>
+</html>
